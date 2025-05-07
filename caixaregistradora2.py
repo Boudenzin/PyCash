@@ -51,7 +51,7 @@ class CaixaRegistradora:
     def __init__(self, nome_vendedor, root):
         self.root = root
         self.root.title("Caixa Registradora")
-        centralizar_janela(self.root, largura=550, altura=350)
+        centralizar_janela(self.root, largura=600, altura=400)
         self.total = 0
         self.nome_vendedor = nome_vendedor
         self.itens = []
@@ -59,41 +59,73 @@ class CaixaRegistradora:
         self.setup_ui()
         
     def setup_ui(self):
-        # Código de barras
-        tk.Label(self.root, text="Código de Barras:").grid(row=0, column=0, sticky="e")
-        self.codigo_entry = tk.Entry(self.root)
+        # Frame principal horizontal
+        frame_principal = tk.Frame(self.root)
+        frame_principal.pack(padx=10, pady=10)
+
+        # Frame esquerdo - formulário
+        frame_esquerdo = tk.Frame(frame_principal)
+        frame_esquerdo.grid(row=0, column=0, padx=10)
+
+        # Frame direito - lista de produtos
+        frame_direito = tk.Frame(frame_principal)
+        frame_direito.grid(row=0, column=1, padx=10)
+
+        # === FORMULÁRIO ===
+        tk.Label(frame_esquerdo, text="Código de Barras:").grid(row=0, column=0, sticky="e")
+        self.codigo_entry = tk.Entry(frame_esquerdo)
         self.codigo_entry.grid(row=0, column=1)
 
-        # Unidades
-        tk.Label(self.root, text="Unidades:").grid(row=1, column=0, sticky="e")
-        self.unidades_entry = tk.Entry(self.root)
+        tk.Label(frame_esquerdo, text="Unidades:").grid(row=1, column=0, sticky="e")
+        self.unidades_entry = tk.Entry(frame_esquerdo)
         self.unidades_entry.grid(row=1, column=1)
 
-        # Botão adicionar
-        tk.Button(self.root, text="Adicionar Produto", command=self.adicionar_produto).grid(row=2, column=0, columnspan=2)
+        tk.Button(frame_esquerdo, text="Adicionar Produto", command=self.adicionar_produto)\
+            .grid(row=2, column=0, columnspan=2, pady=5)
 
-        # Lista de produtos
-        self.lista = tk.Text(self.root, height=10, width=50)
-        self.lista.grid(row=3, column=0, columnspan=2)
+        self.lista = tk.Text(frame_esquerdo, height=10, width=40)
+        self.lista.grid(row=3, column=0, columnspan=2, pady=5)
 
-        # Total
-        self.total_var = tk.StringVar()
-        self.total_var.set("Total: R$ 0.00")
-        tk.Label(self.root, textvariable=self.total_var).grid(row=4, column=0, columnspan=2)
+        self.total_var = tk.StringVar(value="Total: R$ 0.00")
+        tk.Label(frame_esquerdo, textvariable=self.total_var).grid(row=4, column=0, columnspan=2)
 
-        # Forma de pagamento
-        tk.Label(self.root, text="Pagamento:").grid(row=5, column=0)
-        self.pagamento_combo = ttk.Combobox(self.root, values=TIPOS_PAGAMENTO, state="readonly")
+        tk.Label(frame_esquerdo, text="Pagamento:").grid(row=5, column=0)
+        self.pagamento_combo = ttk.Combobox(frame_esquerdo, values=TIPOS_PAGAMENTO, state="readonly")
         self.pagamento_combo.grid(row=5, column=1)
         self.pagamento_combo.current(0)
 
-        # Valor em dinheiro
-        tk.Label(self.root, text="Valor Pago (Dinheiro):").grid(row=6, column=0)
-        self.valor_pago_entry = tk.Entry(self.root)
+        tk.Label(frame_esquerdo, text="Valor Pago (Dinheiro):").grid(row=6, column=0)
+        self.valor_pago_entry = tk.Entry(frame_esquerdo)
         self.valor_pago_entry.grid(row=6, column=1)
 
-        # Botão finalizar
-        tk.Button(self.root, text="Finalizar Compra", command=self.finalizar_compra).grid(row=7, column=0, columnspan=2)
+        tk.Button(frame_esquerdo, text="Finalizar Compra", command=self.finalizar_compra)\
+            .grid(row=7, column=0, columnspan=2, pady=5)
+
+        # === LISTA DE PRODUTOS ===
+        tk.Label(frame_direito, text="Clique para adicionar:").pack()
+        self.lista_produtos = tk.Listbox(frame_direito, height=20, width=35)
+        self.lista_produtos.pack()
+
+        # Preencher Listbox com produtos do dicionário global PRODUTOS
+        for codigo, (nome, preco) in PRODUTOS.items():
+            self.lista_produtos.insert(tk.END, f"{codigo} - {nome}")
+
+        self.lista_produtos.bind('<<ListboxSelect>>', self.adicionar_por_lista)
+
+    def adicionar_por_lista(self, event):
+        selecao = event.widget.curselection()
+        if selecao:
+            item = event.widget.get(selecao[0])
+            codigo = item.split(" - ")[0].strip()
+
+            # Preenche o campo e adiciona 1 unidade automaticamente
+            self.codigo_entry.delete(0, tk.END)
+            self.codigo_entry.insert(0, codigo)
+
+            self.unidades_entry.delete(0, tk.END)
+            self.unidades_entry.insert(0, "1")
+
+            self.adicionar_produto()
 
     def adicionar_produto(self):
         codigo = self.codigo_entry.get()
