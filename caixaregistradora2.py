@@ -21,14 +21,18 @@ class TelaInicial:
     def __init__(self, root, iniciar_caixa_callback):
         self.root = root
         self.root.title("Bem-vindo")
+        centralizar_janela(self.root, 400, 200)
+
+        frame_central = tk.Frame(self.root)
+        frame_central.pack(expand=True)
         
-        self.label = tk.Label(root, text="Bem-vindo ao Mercado Bom Todo!\nDigite seu nome para começar:")
+        self.label = tk.Label(frame_central, text="Bem-vindo ao Mercado Bom Todo!\nDigite seu nome para começar:")
         self.label.pack(pady=10)
         
-        self.nome_entry = tk.Entry(root)
+        self.nome_entry = tk.Entry(frame_central)
         self.nome_entry.pack()
 
-        self.botao_iniciar = tk.Button(root, text="Iniciar", command=self.iniciar)
+        self.botao_iniciar = tk.Button(frame_central, text="Iniciar", command=self.iniciar)
         self.botao_iniciar.pack(pady=10)
 
         self.iniciar_caixa_callback = iniciar_caixa_callback
@@ -47,6 +51,7 @@ class CaixaRegistradora:
     def __init__(self, nome_vendedor, root):
         self.root = root
         self.root.title("Caixa Registradora")
+        centralizar_janela(self.root, largura=550, altura=350)
         self.total = 0
         self.nome_vendedor = nome_vendedor
         self.itens = []
@@ -143,6 +148,13 @@ class CaixaRegistradora:
         self.itens.clear()
         self.total_var.set("Total: R$ 0.00")
         self.valor_pago_entry.delete(0, tk.END)
+
+def centralizar_janela(janela, largura=400, altura=200):
+    largura_tela = janela.winfo_screenwidth()
+    altura_tela = janela.winfo_screenheight()
+    x = (largura_tela // 2) - (largura // 2)
+    y = (altura_tela // 2) - (altura // 2)
+    janela.geometry(f"{largura}x{altura}+{x}+{y}")
 
 def iniciar_caixa(nome_vendedor):
     nova_janela = tk.Tk()
