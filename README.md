@@ -74,10 +74,10 @@ O código está organizado da seguinte forma:
 Futuras metas a serem alcançadas pelo projeto
 
 1. **Interface Gráfica**:
-   - Implementar uma interface gráfica usando bibliotecas como `Tkinter` ou `PyQt`.
+   - Implementar uma interface gráfica usando bibliotecas como `Tkinter` ✅
 
 2. **Banco de Dados**:
-   - Substituir as listas por um banco de dados (SQLite, MySQL) para armazenar produtos e transações.
+   - Substituir as listas por um banco de dados (SQLite, MySQL) para armazenar produtos ✅ e transações.
 
 3. **Leitor de Código de Barras**:
    - Integrar um leitor de código de barras real para automação do processo.
