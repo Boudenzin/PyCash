@@ -180,7 +180,34 @@ class CaixaRegistradora:
         else:
             messagebox.showinfo("Compra Finalizada", f"Pagamento em {metodo} confirmado.")
 
+        try:
+            self.salvar_transacao(self.itens, self.total)
+        except Exception as e:
+            messagebox.showerror("Erro ao salvar", f"Não foi possível registrar a transação:\n{e}")
+
         self.resetar()
+
+    def salvar_transacao(self, itens, total):
+        conexao = conectar()
+        cursor = conexao.cursor()
+
+        # Inserir na tabela transacoes
+        cursor.execute("INSERT INTO transacoes (total) VALUES (%s)", (total,))
+        transacao_id = cursor.lastrowid
+
+        # Inserir cada item na tabela itens_transacao
+        for item in itens:  # item = (codigo, nome, unidades, preco)
+            codigo, nome, unidades, preco = item
+            cursor.execute("""
+                INSERT INTO itens_transacao (transacao_id, codigo_barras, nome, preco_unitario, quantidade)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (transacao_id, codigo, nome, preco, unidades))
+
+        conexao.commit()
+        cursor.close()
+        conexao.close()
+
+        
 
     def resetar(self):
         self.lista.delete("1.0", tk.END)
