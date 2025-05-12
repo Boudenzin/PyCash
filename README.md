@@ -63,24 +63,44 @@ pip install mysql-connector-python python-dotenv
 2. Configure o banco de dados com as tabelas:
 
    ```sql
-   CREATE DATABASE CaixaDB;
-   USE CaixaDB;
-   CREATE TABLE produtos (
-       codigo_barras VARCHAR(13) PRIMARY KEY,
-       nome VARCHAR(100) NOT NULL,
-       preco DECIMAL(10, 2) NOT NULL
-   );
-   INSERT INTO produtos (codigo_barras, nome, preco) VALUES
-   ('7123456789012', 'Macarrão Espaguete', 2.99),
-   ('7987654321098', 'Molho de Tomate', 1.49),
-   ('7456789012345', 'Arroz Integral', 3.25),
-   ('7321098765432', 'Feijão Preto', 2.75),
-   ('7567890123456', 'Leite Desnatado', 1.99),
-   ('7890123456789', 'Pão de Forma Integral', 4.49),
-   ('7234567890123', 'Iogurte Natural', 2.29),
-   ('7678901234567', 'Cereal Matinal', 3.99),
-   ('7345678901234', 'Salmão Fresco', 10.99),
-   ('7789012345678', 'Maçãs Gala', 0.79);
+   CREATE DATABASE IF NOT EXISTS CaixaDB;
+    USE CaixaDB;
+    
+    CREATE TABLE IF NOT EXISTS produtos (
+        codigo_barras VARCHAR(13) PRIMARY KEY,
+        nome VARCHAR(100) NOT NULL,
+        preco DECIMAL(10, 2) NOT NULL
+    );
+    
+    INSERT INTO produtos (codigo_barras, nome, preco) VALUES
+    ('7123456789012', 'Macarrão Espaguete', 2.99),
+    ('7987654321098', 'Molho de Tomate', 1.49),
+    ('7456789012345', 'Arroz Integral', 3.25),
+    ('7321098765432', 'Feijão Preto', 2.75),
+    ('7567890123456', 'Leite Desnatado', 1.99),
+    ('7890123456789', 'Pão de Forma Integral', 4.49),
+    ('7234567890123', 'Iogurte Natural', 2.29),
+    ('7678901234567', 'Cereal Matinal', 3.99),
+    ('7345678901234', 'Salmão Fresco', 10.99),
+    ('7789012345678', 'Maçãs Gala', 0.79)
+    ON DUPLICATE KEY UPDATE nome = VALUES(nome), preco = VALUES(preco);
+    
+    CREATE TABLE IF NOT EXISTS transacoes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        data DATETIME DEFAULT CURRENT_TIMESTAMP,
+        total DECIMAL(10, 2) NOT NULL
+    );
+    
+    CREATE TABLE IF NOT EXISTS itens_transacao (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        transacao_id INT,
+        codigo_barras VARCHAR(50),
+        nome VARCHAR(100),
+        preco_unitario DECIMAL(10, 2),
+        quantidade INT,
+        FOREIGN KEY (transacao_id) REFERENCES transacoes(id)
+    );
+
 
    ```
 
@@ -110,7 +130,7 @@ pip install mysql-connector-python python-dotenv
 
 1. ✅ **Interface Gráfica com Tkinter**
 2. ✅ **Banco de Dados com MySQL**
-3. 🔲 **Armazenamento de Transações**
+3. ✅ **Armazenamento de Transações**
 4. ✅ **Testes Automatizados com `unittest`**
 6. 🔲 **Geração de Relatórios de Vendas**
 8. 🔲 **Deploy em Servidor/Nuvem**
