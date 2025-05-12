@@ -1,6 +1,6 @@
 # PyCash
 
-O **PyCash** é um sistema simples desenvolvido em Python que simula o funcionamento de uma caixa registradora de supermercado. O objetivo principal é processar produtos, calcular o valor total da compra e permitir diferentes formas de pagamento (crédito, débito e dinheiro). O projeto foi criado como parte do aprendizado em Python, com planos de evoluir para um sistema mais completo e com interface gráfica no futuro.
+O **PyCash** é um sistema simples desenvolvido em Python que simula o funcionamento de uma caixa registradora de supermercado. O objetivo principal é processar produtos, calcular o valor total da compra, permitir diferentes formas de pagamento e registrar transações em banco de dados. O projeto evoluiu de uma estrutura procedural para uma aplicação com interface gráfica utilizando **Tkinter** e conexão com **MySQL**.
 
 ---
 
@@ -11,91 +11,112 @@ O **PyCash** é um sistema simples desenvolvido em Python que simula o funcionam
 - **Formas de Pagamento**: Suporta pagamento em dinheiro, crédito e débito.
 - **Simulação de Maquininha**: Validação de senha para pagamentos com cartão.
 - **Troco Automático**: Calcula o troco para pagamentos em dinheiro.
+- **Interface Gráfica (GUI)**: Desenvolvida com Tkinter para facilitar a usabilidade.
+- **Armazenamento de Transações**: As compras realizadas são salvas no banco de dados.
+- **Testes Automatizados**: Cobertura básica com `unittest` para garantir integridade do sistema.
 
 ---
 
 ## Tecnologias Utilizadas
 
 - **Linguagem**: Python
-- **Bibliotecas**: `random` (para gerar códigos de barras aleatórios).
-- **Estrutura**: Programação procedural com uso de listas e loops.
+- **Interface**: Tkinter
+- **Banco de Dados**: MySQL
+- **Bibliotecas**:
+  - `mysql-connector-python`
+  - `tkinter`
+  - `unittest`
+  - `dotenv`
 
 ---
 
 ## Como Executar o Projeto
 
 ### Pré-requisitos
-- Python 3.x instalado.
-- Um ambiente de desenvolvimento (IDE como PyCharm, VS Code, ou terminal).
 
-### Passos para Execução
+- Python 3.x instalado
+- Banco de dados MySQL ativo
+- Criar o arquivo `.env` com as credenciais:
+```
+
+DB_HOST=localhost
+DB_USER=seu_usuario
+DB_PASSWORD=sua_senha
+DB_NAME=nome_do_banco
+
+````
+
+- Instalar dependências:
+```bash
+pip install mysql-connector-python python-dotenv
+````
+
+### Passos
 
 1. Clone o repositório:
+
    ```bash
    git clone https://github.com/Boudenzin/PyCash.git
-   
-2. Navegue até o diretório do projeto:
-   ```bash
    cd PyCash
    ```
 
-3. Execute o arquivo Python:
-   ```bash
-   python caixaregistradora2.py
+2. Configure o banco de dados com as tabelas:
+
+   ```sql
+   CREATE DATABASE CaixaDB;
+   USE CaixaDB;
+   CREATE TABLE produtos (
+       codigo_barras VARCHAR(13) PRIMARY KEY,
+       nome VARCHAR(100) NOT NULL,
+       preco DECIMAL(10, 2) NOT NULL
+   );
+   INSERT INTO produtos (codigo_barras, nome, preco) VALUES
+   ('7123456789012', 'Macarrão Espaguete', 2.99),
+   ('7987654321098', 'Molho de Tomate', 1.49),
+   ('7456789012345', 'Arroz Integral', 3.25),
+   ('7321098765432', 'Feijão Preto', 2.75),
+   ('7567890123456', 'Leite Desnatado', 1.99),
+   ('7890123456789', 'Pão de Forma Integral', 4.49),
+   ('7234567890123', 'Iogurte Natural', 2.29),
+   ('7678901234567', 'Cereal Matinal', 3.99),
+   ('7345678901234', 'Salmão Fresco', 10.99),
+   ('7789012345678', 'Maçãs Gala', 0.79);
+
    ```
 
-4. Siga as instruções no terminal:
-   - Insira os códigos de barras dos produtos.
-   - Escolha a forma de pagamento.
-   - Siga os passos para finalizar a compra.
+3. Execute a interface gráfica:
+
+   ```bash
+   python main.py
+   ```
+
+4. (Opcional) Execute os testes automatizados:
+
+   ```bash
+   python teste.py
+   ```
 
 ---
 
-## Estrutura do Código
+## Estrutura do Projeto
 
-O código está organizado da seguinte forma:
-
-- **Listas de Dados**:
-  - `codigos`: Armazena os códigos de barras dos produtos.
-  - `produtos`: Armazena os nomes dos produtos.
-  - `precos`: Armazena os preços dos produtos.
-  - `tiposdepagamento`: Define as formas de pagamento aceitas.
-
-- **Lógica Principal**:
-  - Geração de códigos de barras aleatórios.
-  - Verificação de produtos cadastrados.
-  - Cálculo do valor total da compra.
-  - Processamento de pagamentos (crédito, débito e dinheiro).
+* `main.py` – Interface principal do caixa registradora com Tkinter.
+* `db.py` – Gerenciamento da conexão com MySQL.
+* `teste.py` – Testes automatizados com `unittest`.
 
 ---
 
 ## Próximos Objetivos
 
-Futuras metas a serem alcançadas pelo projeto
+1. ✅ **Interface Gráfica com Tkinter**
+2. ✅ **Banco de Dados com MySQL**
+3. 🔲 **Armazenamento de Transações**
+4. ✅ **Testes Automatizados com `unittest`**
+6. 🔲 **Geração de Relatórios de Vendas**
+8. 🔲 **Deploy em Servidor/Nuvem**
 
-1. **Interface Gráfica**:
-   - Implementar uma interface gráfica usando bibliotecas como `Tkinter` ✅
-
-2. **Banco de Dados**:
-   - Substituir as listas por um banco de dados (SQLite, MySQL) para armazenar produtos ✅ e transações.
-
-3. **Leitor de Código de Barras**:
-   - Integrar um leitor de código de barras real para automação do processo.
-
-4. **Relatórios**:
-   - Gerar relatórios de vendas diárias, mensais e anuais.
-
-5. **Autenticação de Usuários**:
-   - Adicionar um sistema de login para funcionários e administradores.
-
-6. **Testes Automatizados**:
-   - Implementar testes unitários com `unittest` ou `pytest` para garantir a qualidade do código.
-
-7. **Deploy**:
-   - Publicar o sistema em um servidor ou plataforma na nuvem para acesso remoto.
+---
 
 ## Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-
